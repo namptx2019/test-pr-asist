@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "ELCA Bitbucket AI Agent",
+  "version": "1.0",
+  "description": "Interact with AI API to review the PR",
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://bitbucket.svc.elca.ch/*"
+  ],
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "src/scripts/content.ts"
+      ],
+      "css": [
+        "src/styles/style.css"
+      ],
+      "matches": [
+        "https://bitbucket.svc.elca.ch/projects/*/repos/*/pull-requests/*"
+      ]
+    }
+  ]
+}
