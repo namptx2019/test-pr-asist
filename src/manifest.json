@@ -21,7 +21,8 @@
   "content_scripts": [
     {
       "js": [
-        "src/scripts/content.ts"
+        "src/scripts/content.ts",
+        "src/result-dialog/result-dialog.ts"
       ],
       "css": [
         "src/styles/style.css"
