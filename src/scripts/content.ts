@@ -1,4 +1,7 @@
-import { ResultDialog } from "../result-dialog/result-dialog";
+import { IReviewData, ResultDialog } from "../result-dialog/result-dialog";
+
+
+////////// --- Setup button Start AI Review ---///////////////
 
 const container = document.querySelector(".pull-request-title-review-section")!;
 
@@ -68,49 +71,18 @@ function getKey(project: any, repo: any, prId: any, user: any, file: any) {
   return `draft-pull-request-${project}/${repo}/${prId}-user-${user}-diff-${file}/EFFECTIVE`;
 }
 
-////////////////////////////////////////
-
+////////// --- Setup button View AI Commment ---///////////////
 
 const openCommentDialog = document.createElement("button");
 openCommentDialog.innerText = "View AI Comment";
 openCommentDialog.classList.add("status-button", "review");
 
 openCommentDialog.onclick = async () => {
-  // const resp = await fetch(
-  //   `${localStorage.getItem(
-  //     "ELCA_AGENT_API"
-  //   )}/pr/result?project=${project}&repo=${repo}&pr_number=${pullRequestId}`
-  // );
-  // const data = await resp.json();
-  var dialog = new ResultDialog();
+  const test = {} as IReviewData;
+  const dialog = new ResultDialog(test);
   dialog.createResultDialog();
 };
 
 presentation.appendChild(openCommentDialog);
 statusWraper.appendChild(presentation);
 container.appendChild(statusWraper);
-
-
-// --- Helper to render issues for one file ---
-function renderFileIssues(file: string, issues: any[], container: HTMLElement) {
-  container.innerHTML = `<h3>${file}</h3>`;
-  const list = document.createElement("ul");
-  list.classList.add("ai-review-list");
-
-  issues.forEach((issue: any) => {
-    const li = document.createElement("li");
-    li.classList.add("ai-review-item", `severity-${issue.severity}`);
-
-    li.innerHTML = `
-      <strong>Line:</strong> ${issue.line_number}<br/>
-      <strong>Header:</strong> ${issue.header}<br/>
-      <strong>Comment:</strong> ${issue.comment}<br/>
-      <strong>Best Practice:</strong> ${issue.coding_best_practice}<br/>
-      <strong>Severity:</strong> <span class="severity-label">${issue.severity}</span>
-    `;
-
-    list.appendChild(li);
-  });
-
-  container.appendChild(list);
-}

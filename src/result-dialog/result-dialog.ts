@@ -1,4 +1,19 @@
+export interface IIssue {
+    line_number: string;
+    severity: string;
+    header: string;
+    comment: string;
+    coding_best_practice: string;
+}
+
+export interface IReviewData {
+    status: string;
+    duration?: number;
+    percentage?: number;
+    result?: IIssue[];
+}
 export class ResultDialog {
+    dialog: any;
     data = {
         status: "COMPLETED",
         percentage: 100.0,
@@ -162,25 +177,30 @@ export class ResultDialog {
                 severity: "C",
             },
         ],
-    };
+    } as IReviewData;
+
+    constructor(data: IReviewData) {
+        // this.data = data; // todo set data later
+    }
+
 
     createResultDialog() {
         // Remove old dialog if exists
         document.querySelector("#ai-review-dialog")?.remove();
 
-        const dialog = document.createElement("dialog");
-        dialog.id = "ai-review-dialog";
-        dialog.classList.add("ai-review-dialog");
+        this.dialog = document.createElement("dialog");
+        this.dialog.id = "ai-review-dialog";
+        this.dialog.classList.add("ai-review-dialog");
 
         // --- Header ---
         const title = document.createElement("h2");
         title.innerText = `AI Review Result (Status: ${this.data.status
             }, Duration: ${this.data.duration?.toFixed(2)}s)`;
-        dialog.appendChild(title);
+        this.dialog.appendChild(title);
 
         const progress = document.createElement("p");
         progress.innerText = `Progress: ${this.data.percentage ?? 0}%`;
-        dialog.appendChild(progress);
+        this.dialog.appendChild(progress);
 
         if (this.data.result?.length) {
             // --- Build sidebar + content wrapper ---
@@ -232,31 +252,36 @@ export class ResultDialog {
 
             wrapper.appendChild(sidebar);
             wrapper.appendChild(content);
-            dialog.appendChild(wrapper);
+            this.dialog.appendChild(wrapper);
         } else {
             const none = document.createElement("p");
             none.innerText = "✅ No issues found!";
-            dialog.appendChild(none);
+            this.dialog.appendChild(none);
         }
 
         // --- Close button ---
         const closeBtn = document.createElement("button");
         closeBtn.innerText = "Close";
         closeBtn.classList.add("ai-review-close");
-        closeBtn.onclick = () => dialog.close();
-        dialog.appendChild(closeBtn);
+        this.dialog.appendChild(closeBtn);
 
-        document.body.appendChild(dialog);
-        dialog.showModal();
+        closeBtn.onclick = () => this.closeDialog();
+
+        document.body.appendChild(this.dialog);
+        this.dialog.showModal();
+    }
+
+    closeDialog() {
+        document.body.removeChild(this.dialog);
     }
 
     // --- Helper to render issues for one file ---
-    renderFileIssues(file: string, issues: any[], container: HTMLElement) {
+    renderFileIssues(file: string, issues: IIssue[], container: HTMLElement) {
         container.innerHTML = `<h3>${file}</h3>`;
         const list = document.createElement("ul");
         list.classList.add("ai-review-list");
 
-        issues.forEach((issue: any) => {
+        issues.forEach((issue: IIssue) => {
             const li = document.createElement("li");
             li.classList.add("ai-review-item", `severity-${issue.severity}`);
 
